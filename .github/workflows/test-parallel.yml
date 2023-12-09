@@ -3,7 +3,7 @@ name: Frontend Test (parallel)
 on:
   push:
     branches:
-      - Prod
+      - Dev
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   test:
-    name: FrontEnd Test
+    name: Test
     runs-on: ubuntu-latest
 
     container:
@@ -31,25 +31,14 @@ jobs:
         options: --shm-size=2gb
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js and Yarn
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
-      - run: yarn install
-
-      - name: Build Frontend
-        run: yarn build
-
-      - name: Start Docker Container
-        run: docker run -d --name my-frontend-app -p 8080:80 my-frontend-app
-
-      - name: Wait for Container to Start
-        run: sleep 10
-
-      - name: Run Tests
+          node-version: '19'  
+          cache: 'pnpm'
+      - run: npm ci
+      - run: npm install --frozen-lockfile  # Agregué esta línea para forzar la generación de package-lock.json
       - run: npm run test
         env:
           BROWSER: ${{ matrix.browser }}
