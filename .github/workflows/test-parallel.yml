@@ -1,9 +1,11 @@
-name: Frontend Test (parallel)
+name: Frontend Test
 
 on:
   push:
     branches:
       - Dev
+      - Test
+      - Prod
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -13,8 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test
+  FrontEndTest:
+    name: FrontEndTest
     runs-on: ubuntu-latest
 
     container:
@@ -37,9 +39,8 @@ jobs:
         with:
           node-version: '19'  
           cache: 'pnpm'
-      - run: npm ci
-      - run: npm install --frozen-lockfile  # Agregué esta línea para forzar la generación de package-lock.json
-      - run: npm run test
+      - run: yarn install --frozen-lockfile
+      - run: yarn start
         env:
           BROWSER: ${{ matrix.browser }}
       - uses: actions/upload-artifact@v3
