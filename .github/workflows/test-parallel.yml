@@ -1,0 +1,49 @@
+name: Frontend Test (parallel)
+
+on:
+  push:
+    branches:
+      - Dev
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+concurrency:
+  group: environment-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    container:
+      image: node:19
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ['chrome', 'firefox', 'edge']
+
+    services:
+      selenium:
+        image: selenium/standalone-${{ matrix.browser }}
+        options: --shm-size=2gb
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '19'  
+          cache: 'pnpm'
+      - run: npm ci
+      - run: npm install --frozen-lockfile  # Agregué esta línea para forzar la generación de package-lock.json
+      - run: npm run test
+        env:
+          BROWSER: ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ${{ matrix.browser }}
+          path: screenshots/
