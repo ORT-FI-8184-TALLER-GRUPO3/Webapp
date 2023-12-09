@@ -3,7 +3,7 @@ name: Frontend Test (parallel)
 on:
   push:
     branches:
-      - Dev
+      - Prod
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   test:
-    name: Test
+    name: FrontEnd Test
     runs-on: ubuntu-latest
 
     container:
