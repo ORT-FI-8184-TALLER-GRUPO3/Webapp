@@ -1,13 +1,5 @@
 name: Frontend Test
 
-on:
-  workflow_dispatch:
-  workflow_call:
-
-concurrency:
-  group: environment-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   FrontEndTest:
     name: FrontEndTest
