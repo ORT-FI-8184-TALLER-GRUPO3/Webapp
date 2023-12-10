@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: node:19
+      image: node:14
 
     strategy:
       fail-fast: false
@@ -33,14 +33,34 @@ jobs:
         options: --shm-size=2gb
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: '19'  
-          cache: 'npm'
-          cache-dependency-path: ./yarn-lock.json
-      - run: npm ci
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Test code
+        run: npm run test
+
+      - name: Build app
+        run: npm run build
+
+      - name: Chequeos
+        run: |
+          ls
+          echo "ls en dist"
+          ls dist/
+
+      - name: Upload Artifact with JAR file
+        uses: actions/upload-artifact@v3
+        with:
+          name: "pagina"
+          path: dist/
       - run: npm run test
         env:
           BROWSER: ${{ github.event.inputs.browser }}
