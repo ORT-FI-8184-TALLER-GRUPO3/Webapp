@@ -43,24 +43,21 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      
-      - name: Test code
-        run: npm run test
 
       - name: Build app
         run: npm run build
 
-      - name: Chequeos
+      - name: Lista archivos
         run: |
           ls
           echo "ls en dist"
           ls dist/
 
-      - name: Upload Artifact with JAR file
-        uses: actions/upload-artifact@v3
-        with:
-          name: "pagina"
-          path: dist/
+      # - name: Upload Artifact with JAR file
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: "pagina"
+      #     path: dist/
       - run: npm run test
         env:
           BROWSER: ${{ github.event.inputs.browser }}
