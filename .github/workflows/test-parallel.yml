@@ -15,44 +15,25 @@ on:
         default: './pom.xml' 
 
 jobs:
-  FrontEndTest:
-    name: FrontEndTest
+  test:
+    name: Test
     runs-on: ubuntu-latest
 
     container:
-      image: node:14
+      image: node:19
 
     services:
       selenium:
-        image: selenium/standalone-${{ matrix.browser }}
+        image: selenium/standalone-${{ github.event.inputs.browser }}
         options: --shm-size=2gb
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '14'
-
-      - name: Install dependencies
-        run: npm install
-      
-      - name: Build app
-        run: npm run build
-
-      - name: Chequeos
-        run: |
-          ls
-          echo "ls en dist"
-          ls dist/
-
-      - name: Upload Artifact with JAR file
-        uses: actions/upload-artifact@v3
-        with:
-          name: "pagina"
-          path: dist/
+          node-version: '19'
+          cache: 'npm'
+      - run: npm ci
       - run: npm run test
         env:
           BROWSER: ${{ github.event.inputs.browser }}
@@ -61,3 +42,50 @@ jobs:
         with:
           name: screenshots
           path: screenshots/
+
+  # FrontEndTest:
+  #   name: FrontEndTest
+  #   runs-on: ubuntu-latest
+
+  #   container:
+  #     image: node:14
+
+  #   services:
+  #     selenium:
+  #       image: selenium/standalone-${{ matrix.browser }}
+  #       options: --shm-size=2gb
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14'
+
+  #     - name: Install dependencies
+  #       run: npm install
+      
+  #     - name: Build app
+  #       run: npm run build
+
+  #     - name: Chequeos
+  #       run: |
+  #         ls
+  #         echo "ls en dist"
+  #         ls dist/
+
+  #     - name: Upload Artifact with JAR file
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: "pagina"
+  #         path: dist/
+  #     - run: npm run test
+  #       env:
+  #         BROWSER: ${{ github.event.inputs.browser }}
+  #     - uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: screenshots
+  #         path: screenshots/
