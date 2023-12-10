@@ -22,9 +22,14 @@ jobs:
     container:
       image: node:19
 
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ['chrome', 'firefox', 'edge']
+
     services:
       selenium:
-        image: selenium/standalone-${{ github.event.inputs.browser }}
+        image: selenium/standalone-${{ matrix.browser }}
         options: --shm-size=2gb
 
     steps:
@@ -36,11 +41,11 @@ jobs:
       - run: npm ci
       - run: npm run test
         env:
-          BROWSER: ${{ github.event.inputs.browser }}
+          BROWSER: ${{ matrix.browser }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: screenshots
+          name: ${{ matrix.browser }}
           path: screenshots/
 
   # FrontEndTest:
