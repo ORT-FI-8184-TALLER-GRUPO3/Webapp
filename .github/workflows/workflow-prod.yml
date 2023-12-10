@@ -13,25 +13,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  AnalisisSonarQube:
-    uses: ./.github/workflows/sonarscan.yml
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  FrontEndTest:
-    needs: AnalisisSonarQube
+  test:
     name: FrontEndTest
-    uses: ./.github/workflows/test-parallel.yml
-    secrets: inherit
-  DeployToS3:
-    needs: FrontEndTest
-    name: DeployToS3
-    uses: ./.github/workflows/deploy-to-s3.yml
-    with:
-      CI_ENV: Prod
-      CONTENTFUL_ENVIRONMENT: 'Prod'
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN}}
-      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      S3_ORIGIN_BUCKET: ${{ secrets.S3_ORIGIN_BUCKET_PROD }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ['chrome', 'firefox', 'edge']
+
+    services:
+      selenium:
+        image: selenium/standalone-${{ matrix.browser }}
+        options: --shm-size=2gb
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint
+      - run: yarn build
+      - run: yarn test
+     
+      - name: Build React App
+        run: ./.github/scripts/build.sh
+        shell: bash
+      - run: yarn start
+      - run: npm run test
+        env:
+          BROWSER: ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ${{ matrix.browser }}
+          path: screenshots/
