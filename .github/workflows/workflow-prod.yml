@@ -13,8 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  SonarTest:
-  name: AnalisisSonarQube
+  AnalisisSonarQube:
     uses: ./.github/workflows/sonarscan.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -23,9 +22,8 @@ jobs:
     name: FrontEndTest
     uses: ./.github/workflows/test-parallel.yml
     secrets: inherit
-  build-dev:
+  DeployToS3:
     needs: FrontEndTest
-    name: DeployToS3
     uses: ./.github/workflows/deploy-to-s3.yml
     with:
       CI_ENV: Prod
