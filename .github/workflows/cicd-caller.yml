@@ -16,3 +16,4 @@ jobs:
   ReuseableJobForCICD:
     uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
     secrets: inherit
+    
