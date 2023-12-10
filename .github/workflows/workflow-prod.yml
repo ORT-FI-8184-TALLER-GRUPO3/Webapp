@@ -17,21 +17,24 @@ jobs:
     uses: ./.github/workflows/sonarscan.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      
   FrontEndTest:
     needs: SonarTest
     name: FrontEndTest
     runs-on: ubuntu-latest
+
     container:
       image: node:19
+
     strategy:
       fail-fast: false
       matrix:
         browser: ['chrome', 'firefox', 'edge']
+
     services:
       selenium:
         image: selenium/standalone-${{ matrix.browser }}
         options: --shm-size=2gb
+
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node.js
@@ -39,7 +42,6 @@ jobs:
         with:
           node-version: '19'  
           cache: 'npm'
-      - run: docker cp package.json. nombre_de_tu_imagen:/__w/Webapp/Webapp
       - run: npm ci
       - run: npm run test
         env:
