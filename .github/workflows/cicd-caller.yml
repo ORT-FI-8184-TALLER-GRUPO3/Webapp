@@ -13,7 +13,25 @@ on:
       - Prod
 
 jobs:
-  ReuseableJobForCICD:
-    uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
-    secrets: inherit
-    
+  cicd-caller:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set Branch Name and Trigger Main Workflow
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const branchName = github.context.payload.ref.replace('refs/heads/', '');
+            const response = await octokit.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_file: 'ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml',
+              inputs: {
+                branchname: branchName,
+              },
+            });
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
