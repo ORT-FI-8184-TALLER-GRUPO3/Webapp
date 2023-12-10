@@ -20,7 +20,12 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: node:19
+      image: node:14
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ['chrome', 'firefox', 'edge']
 
     services:
       selenium:
@@ -34,11 +39,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '19'
+          node-version: '14'
 
       - name: Install dependencies
         run: npm install
       
+      - name: Test code
+        run: npm run test
+
       - name: Build app
         run: npm run build
 
