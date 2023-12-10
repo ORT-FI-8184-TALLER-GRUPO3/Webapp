@@ -38,7 +38,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '19'  
-          cache: 'pnpm'
+          cache: 'yarn'
       - run: yarn install --frozen-lockfile
       - run: yarn start
         env:
