@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: "14"
       - run: yarn install --frozen-lockfile
-     
+        shell: bash
       - name: Build React App
         run: ./.github/scripts/build.sh
         shell: bash
