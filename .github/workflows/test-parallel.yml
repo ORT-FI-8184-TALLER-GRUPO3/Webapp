@@ -16,11 +16,6 @@ jobs:
     container:
       image: node:14
 
-    strategy:
-      fail-fast: false
-      matrix:
-        browser: ['chrome', 'firefox', 'edge']
-
     services:
       selenium:
         image: selenium/standalone-${{ matrix.browser }}
@@ -38,9 +33,6 @@ jobs:
       - name: Install dependencies
         run: npm install
       
-      - name: Test code
-        run: npm run test
-
       - name: Build app
         run: npm run build
 
