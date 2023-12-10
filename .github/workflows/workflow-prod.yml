@@ -13,46 +13,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    services:
-      docker:
-        image: docker:20.10.7
-        options: --add-host=host.docker.internal:host-gateway  # Permite acceder al host desde el contenedor
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build Docker image
-        run: docker buildx create --use && docker buildx build -t my-docker-image .
-
-      - name: Run Docker container
-        run: docker run -d --name my-container my-docker-image
-
-      - name: Copy files to Docker container
-        run: docker cp . my-container:/app
-
-      - name: Generate yarn.lock
-        run: docker exec my-container yarn install --frozen-lockfile
-
-      - name: Start application
-        run: docker exec my-container yarn start
-
-      - name: Wait for the application to start
-        run: sleep 30
-
-      - run: npm run test
-        env:
-          BROWSER: ${{ github.event.inputs.browser }}
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: screenshots
-          path: screenshots/
-
-      - name: Stop and remove Docker container
-        run: docker stop temporalContainer && docker rm temporalContainer
+  SonarTest:
+    uses: ./.github/workflows/sonarscan.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  build-dev:
+    needs: SonarTest
+    uses: ./.github/workflows/deploy-to-s3.yml
+    with:
+      CI_ENV: Prod
+      CONTENTFUL_ENVIRONMENT: 'Prod'
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN}}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      S3_ORIGIN_BUCKET: ${{ secrets.S3_ORIGIN_BUCKET_PROD }}
