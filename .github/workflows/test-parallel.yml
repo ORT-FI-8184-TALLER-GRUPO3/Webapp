@@ -39,6 +39,7 @@ jobs:
         with:
           node-version: '19'  
           cache: 'npm'
+          cache-dependency-path: ./yarn-lock.json
       - run: npm ci
       - run: npm run test
         env:
