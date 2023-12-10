@@ -1,4 +1,5 @@
 name: Caller CI/CD Workflow
+
 on:
   push:
     branches:
@@ -12,12 +13,18 @@ on:
       - Prod
 
 jobs:
-  ReuseableJobForCICD:
+  ReusableJobForCICD:
     runs-on: ubuntu-latest
+
     steps:
       - name: Set Branch Name
         id: set_branch
-        run: echo "BRANCH_NAME=${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.event_name == 'push' && github.event.ref }} " >> $GITHUB_ENV
+        run: |
+          echo "BRANCH_NAME=${
+            { github.event_name == 'pull_request'
+              ? github.event.pull_request.head.ref
+              : github.event_name == 'push' ? github.event.ref : '' }
+          }" >> $GITHUB_ENV
 
       - name: Run Reusable Job For CI/CD
         uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
