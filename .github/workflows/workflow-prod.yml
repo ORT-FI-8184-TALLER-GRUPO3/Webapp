@@ -22,16 +22,6 @@ jobs:
         command: ["dockerd", "--host=0.0.0.0", "--add-runtime=nvidia=/usr/bin/nvidia-container-runtime"]
 
     steps:
-      obs:
-  build-and-test:
-    runs-on: ubuntu-latest
-
-    services:
-      docker:
-        image: docker:20.10.7
-        command: ["dockerd", "--host=0.0.0.0", "--add-runtime=nvidia=/usr/bin/nvidia-container-runtime"]
-
-    steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
