@@ -38,13 +38,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '19'  
-          cache: 'yarn'
-      - run: yarn install --frozen-lockfile
-      - run: yarn start
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test
         env:
-          BROWSER: ${{ matrix.browser }}
+          BROWSER: ${{ github.event.inputs.browser }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: ${{ matrix.browser }}
+          name: screenshots
           path: screenshots/
