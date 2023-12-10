@@ -1,16 +1,29 @@
 name: Github Action Workflow PROD
 
-on:
-  push:
-    branches:
-      - Prod
-  pull_request:
-    types: [opened, synchronize, reopened]
-  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - Prod
+#   pull_request:
+#     types: [opened, synchronize, reopened]
+#   workflow_dispatch:
 
-concurrency:
-  group: environment-${{ github.ref }}
-  cancel-in-progress: true
+# concurrency:
+#   group: environment-${{ github.ref }}
+#   cancel-in-progress: true
+on:
+  workflow_call:
+    inputs:
+      service:
+        required: false
+        type: string
+      target:
+        required: false
+        type: string
+      pom_path:
+        required: false
+        type: string
+        default: './pom.xml'
 
 jobs:
   AnalisisSonarQube:

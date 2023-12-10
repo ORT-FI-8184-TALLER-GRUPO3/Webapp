@@ -1,0 +1,17 @@
+name: Caller CI/CD Workflow
+on:
+  push:
+    branches:
+      - Dev
+      - Test
+      - Prod
+  pull_request:
+    branches:
+      - Dev
+      - Test
+      - Prod
+
+jobs:
+  ReuseableJobForCICD:
+    uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
+    secrets: inherit
