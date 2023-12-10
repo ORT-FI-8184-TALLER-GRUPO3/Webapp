@@ -13,10 +13,19 @@ on:
       - Prod
 
 jobs:
-  callerCICD:
+  ReusableJobForCICD:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to S3
+      - name: Set Branch Name
+        id: set_branch
+        run: echo "BRANCH_NAME=${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.event_name == 'push' && github.event.ref }} " >> $GITHUB_ENV
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Run Reusable Job For CI/CD
         uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
         with:
-          CI_ENV: ${{ { github.ref } }} 
+          BRANCH_NAME: ${{ steps.set_branch.outputs.BRANCH_NAME }}
+        env:
+          BRANCH_NAME: ${{ steps.set_branch.outputs.BRANCH_NAME }}
