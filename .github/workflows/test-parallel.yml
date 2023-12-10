@@ -19,9 +19,6 @@ jobs:
     name: FrontEndTest
     runs-on: ubuntu-latest
 
-    container:
-      image: node:14
-
     strategy:
       fail-fast: false
       matrix:
@@ -33,36 +30,22 @@ jobs:
         options: --shm-size=2gb
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: '14'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build app
-        run: npm run build
-
-      - name: Lista archivos
-        run: |
-          ls
-          echo "ls en dist"
-          ls dist/
-
-      # - name: Upload Artifact with JAR file
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: "pagina"
-      #     path: dist/
+          node-version: "14"
+      - run: yarn install --frozen-lockfile
+     
+      - name: Build React App
+        run: ./.github/scripts/build.sh
+        shell: bash
+      - run: yarn start
+        shell: bash
       - run: npm run test
         env:
-          BROWSER: ${{ github.event.inputs.browser }}
+          BROWSER: ${{ matrix.browser }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: screenshots
+          name: ${{ matrix.browser }}
           path: screenshots/
