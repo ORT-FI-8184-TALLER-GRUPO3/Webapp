@@ -17,8 +17,13 @@ jobs:
     uses: ./.github/workflows/sonarscan.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  build-dev:
+  FrontEndTest:
     needs: SonarTest
+    name: FrontEndTest
+    uses: ./.github/workflows/test-parallel.yml
+    secrets: inherit
+  build-dev:
+    needs: FrontEndTest
     uses: ./.github/workflows/deploy-to-s3.yml
     with:
       CI_ENV: Prod
