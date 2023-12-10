@@ -25,16 +25,22 @@ jobs:
     container:
       image: node:19
 
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ['chrome', 'firefox', 'edge']
+
     services:
       selenium:
-        image: selenium/standalone-${{ github.event.inputs.browser }}
+        image: selenium/standalone-${{ matrix.browser }}
         options: --shm-size=2gb
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '19'
+          node-version: '19'  
           cache: 'npm'
       - run: npm ci
       - run: npm run test
