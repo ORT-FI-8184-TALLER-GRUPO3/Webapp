@@ -15,30 +15,32 @@ concurrency:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     services:
       docker:
         image: docker:20.10.7
-        command: ["dockerd", "--host=0.0.0.0", "--add-runtime=nvidia=/usr/bin/nvidia-container-runtime"]
+        options: --add-host=host.docker.internal:host-gateway  # Permite acceder al host desde el contenedor
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
       - name: Build Docker image
-        run: docker build -t temporalImage .
+        run: docker buildx create --use && docker buildx build -t my-docker-image .
 
       - name: Run Docker container
-        run: docker run -d --name temporalContainer temporalImage
+        run: docker run -d --name my-container my-docker-image
 
       - name: Copy files to Docker container
         run: docker cp . my-container:/app
 
       - name: Generate yarn.lock
-        run: docker exec temporalContainer yarn install --frozen-lockfile
+        run: docker exec my-container yarn install --frozen-lockfile
 
       - name: Start application
-        run: docker exec temporalContainer yarn start
+        run: docker exec my-container yarn start
 
       - name: Wait for the application to start
         run: sleep 30
