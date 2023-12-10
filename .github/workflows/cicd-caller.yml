@@ -14,7 +14,6 @@ on:
 jobs:
   ReuseableJobForCICD:
     runs-on: ubuntu-latest
-
     steps:
       - name: Set Branch Name
         id: set_branch
