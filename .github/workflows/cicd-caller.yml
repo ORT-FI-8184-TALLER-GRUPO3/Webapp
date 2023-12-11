@@ -17,5 +17,4 @@ jobs:
     uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
     with:
       branchname: env.BRANCH_NAME
-      run: echo "CI_ENV=${{ env.BRANCH_NAME }}"
     secrets: inherit
