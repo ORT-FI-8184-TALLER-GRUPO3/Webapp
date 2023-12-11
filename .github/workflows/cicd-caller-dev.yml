@@ -14,4 +14,5 @@ jobs:
     uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
     with:
       bucket: S3_ORIGIN_BUCKET_DEV
+      ambiente: ${{ github.ref_name }}
     secrets: inherit
