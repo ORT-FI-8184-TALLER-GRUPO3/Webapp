@@ -10,7 +10,5 @@ on:
 
 jobs:
   ReuseableJobForCICD:
-    uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
-    with:
-      bucket: S3_ORIGIN_BUCKET_DEV
+    uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/workflow-dev.yml@main
     secrets: inherit
