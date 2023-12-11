@@ -13,29 +13,8 @@ on:
       - Prod
 
 jobs:
-  ReusableJobForCICD:
+  ReuseableJobForCICD:
     uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
     with:
-      branchname: ${{ env.BRANCH_NAME }}
+      branchname: env.BRANCH_NAME
     secrets: inherit
-
-  SonarQubeAnalisis:
-    name: SonarQubeAnalisis
-    uses: ./.github/workflows/sonarscan-frontend.yml
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  DeployToS3:
-    name: DeployToS3
-    needs: SonarQubeAnalisis
-    uses: ./.github/workflows/deploy-to-s3.yml
-    with:
-      CI_ENV: ${{ env.BRANCH_NAME }}
-      CONTENTFUL_ENVIRONMENT: ${{ env.BRANCH_NAME }}
-      run: echo "CI_ENV=${{ env.BRANCH_NAME }}"
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN}}
-      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      S3_ORIGIN_BUCKET: ${{ secrets["S3_ORIGIN_BUCKET_" + env.BRANCH_NAME] }}
