@@ -4,20 +4,8 @@ on:
   workflow_call:
 
 jobs:
-  CallReusableWorkflow:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set Branch Name
-        id: set_branch
-        run: echo "BRANCH_NAME=${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.event_name == 'push' && github.event.ref }} " >> $GITHUB_ENV
-
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Run Caller Workflow
-        run: |
-          echo "Running Caller Workflow"
-          git clone https://github.com/TU_USUARIO/TU_REPO.git
-          cd TU_REPO
-          git checkout main
-          github/scripts/my-reusable-workflow.sh ${{ steps.set_branch.outputs.BRANCH_NAME }}
+  ReuseableJobForCICD:
+    uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
+    with:
+      pom_path: ${{ env.BRANCH_NAME }}
+    secrets: inherit
