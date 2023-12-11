@@ -1,4 +1,4 @@
-name: Caller CI/CD WorkflowDev
+name: Caller CI/CD WorkflowTest
 
 on:
   push:
