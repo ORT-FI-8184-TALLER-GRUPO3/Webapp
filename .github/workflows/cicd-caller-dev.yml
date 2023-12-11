@@ -1,7 +1,6 @@
 name: Caller CI/CD WorkflowDev
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - Dev
