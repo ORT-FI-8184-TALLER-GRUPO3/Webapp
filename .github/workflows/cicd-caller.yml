@@ -1,19 +1,10 @@
 name: Caller CI/CD Workflow
 
 on:
-  push:
-    branches:
-      - Dev
-      - Test
-      - Prod
-  pull_request:
-    branches:
-      - Dev
-      - Test
-      - Prod
+  workflow_call:
 
 jobs:
-  ReusableJobForCICD:
+  CallReusableWorkflow:
     runs-on: ubuntu-latest
     steps:
       - name: Set Branch Name
@@ -22,8 +13,11 @@ jobs:
 
       - name: Checkout Repository
         uses: actions/checkout@v2
-        
-      - name: Run Reusable Job For CI/CD
-        uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
-        with:
-          branchname: ${{ steps.set_branch.outputs.BRANCH_NAME }}
+
+      - name: Run Caller Workflow
+        run: |
+          echo "Running Caller Workflow"
+          git clone https://github.com/TU_USUARIO/TU_REPO.git
+          cd TU_REPO
+          git checkout main
+          github/scripts/my-reusable-workflow.sh ${{ steps.set_branch.outputs.BRANCH_NAME }}
