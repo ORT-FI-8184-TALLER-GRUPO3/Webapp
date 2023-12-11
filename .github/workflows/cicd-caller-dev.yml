@@ -4,17 +4,13 @@ on:
   push:
     branches:
       - Dev
-      - Test
-      - Prod
   pull_request:
     branches:
       - Dev
-      - Test
-      - Prod
 
 jobs:
   ReuseableJobForCICD:
     uses: ORT-FI-8184-TALLER-GRUPO3/Devops/.github/workflows/cicd-frontend.yml@main
     with:
-      branchname: S3_ORIGIN_BUCKET_DEV
+      bucket: S3_ORIGIN_BUCKET_DEV
     secrets: inherit
