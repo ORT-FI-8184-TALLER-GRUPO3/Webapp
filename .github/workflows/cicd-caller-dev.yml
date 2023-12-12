@@ -3,10 +3,10 @@ name: Caller CI/CD WorkflowDev
 on:
   push:
     branches:
-      - Dev
+      - dev
   pull_request:
     branches:
-      - Dev
+      - dev
 
 jobs:
   ReuseableJobForCICD:
